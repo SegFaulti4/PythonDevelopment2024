@@ -3,9 +3,10 @@ import cowsay
 import sys
 
 
-def parse_arguments():
+def arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("message", nargs="*", type=str)
+    parser.add_argument("-n", dest="wrap_text", action="store_false", help="do not wrap text, if specified any positional arguments are prohibited")
     parser.add_argument("-f", dest="cow", action="store", default="default", type=str)
     parser.add_argument("-e", dest="eyes", action="store", default="OO", type=str)
     parser.add_argument("-T", dest="tongue", action="store", default="  ", type=str)
@@ -17,35 +18,25 @@ def parse_arguments():
     parser.add_argument("-t", const="t", dest="preset", action="append_const")
     parser.add_argument("-w", const="w", dest="preset", action="append_const")
     parser.add_argument("-y", const="y", dest="preset", action="append_const")
-    return parser.parse_args()
-
-
-def read_message():
-    msg = sys.stdin.readline().rstrip()
-    for line in sys.stdin.readlines():
-        line = line.rstrip()
-        # XXX: (for some reason) this is needed to correctly handle EOF
-        if not line:
-            break
-        if line.startswith(" "):
-            msg += "\n"
-            line = line[1:]
-        msg += " " + line
-    return msg
+    return parser
 
 
 if __name__ == "__main__":
-    args = parse_arguments()
+    parser = arg_parser()
+    args = parser.parse_args()
     args.eyes = args.eyes[:2]
     args.tongue = args.tongue[:2]
     args.preset = None if args.preset is None else "".join(args.preset)
 
     if args.message:
+        if not args.wrap_text:
+            parser.print_help()
+            parser.exit()
         # NOTE: emulating "cowsay" behaviour
         message = [w for arg in args.message for w in arg.split(" ") if w]
         message = " ".join(message)
     else:
-        message = read_message()
+        message = "".join(sys.stdin.readlines())
     print(
         cowsay.cowsay(
             message,
@@ -54,5 +45,6 @@ if __name__ == "__main__":
             eyes=args.eyes,
             tongue=args.tongue,
             width=args.width,
+            wrap_text=args.wrap_text,
         )
     )
