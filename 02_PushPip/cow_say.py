@@ -1,11 +1,13 @@
 import argparse
 import cowsay
 import sys
+import textwrap
 
 
 def arg_parser():
     parser = argparse.ArgumentParser()
     parser.add_argument("message", nargs="*", type=str)
+    parser.add_argument("-l", dest="list_cows", action="store_true", help="list all cows")
     parser.add_argument("-n", dest="wrap_text", action="store_false", help="do not wrap text, if specified any positional arguments are prohibited")
     parser.add_argument("-f", dest="cow", action="store", default="default", type=str)
     parser.add_argument("-e", dest="eyes", action="store", default="OO", type=str)
@@ -28,6 +30,12 @@ if __name__ == "__main__":
     args.tongue = args.tongue[:2]
     args.preset = None if args.preset is None else "".join(args.preset)
 
+    if args.list_cows:
+        cows = " ".join(sorted(cowsay.list_cows()))
+        text = textwrap.wrap(cows, width=70)
+        print(*text, sep="\n")
+        parser.exit()
+
     if args.message:
         if not args.wrap_text:
             parser.print_help()
@@ -37,6 +45,7 @@ if __name__ == "__main__":
         message = " ".join(message)
     else:
         message = "".join(sys.stdin.readlines())
+
     print(
         cowsay.cowsay(
             message,
