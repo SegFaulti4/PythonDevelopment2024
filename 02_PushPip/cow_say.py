@@ -5,6 +5,7 @@ import sys
 
 def parse_arguments():
     parser = argparse.ArgumentParser()
+    parser.add_argument("message", nargs="*")
     return parser.parse_args()
 
 
@@ -24,5 +25,10 @@ def read_message():
 
 if __name__ == "__main__":
     args = parse_arguments()
-    message = read_message()
+    if args.message:
+        # NOTE: emulating "cowsay" behaviour
+        message = [w for arg in args.message for w in arg.split(" ") if w]
+        message = " ".join(message)
+    else:
+        message = read_message()
     print(cowsay.cowsay(message))
