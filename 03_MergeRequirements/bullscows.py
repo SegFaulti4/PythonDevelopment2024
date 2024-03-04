@@ -2,6 +2,8 @@ from collections import defaultdict
 from random import choice
 import argparse
 import os.path
+# SRC: https://pypi.org/project/python-cowsay/
+import cowsay
 
 
 def bullscows(guess: str, secret: str) -> (int, int):
@@ -30,7 +32,7 @@ def gameplay(ask: callable, inform: callable, words: list[str]) -> int:
     tries, b, c = 0, 0, 0
 
     while b != len(word):
-        inp = ask("Введите слово: ", words)
+        inp = ask("Введите слово", words)
         b, c = bullscows(inp, word)
         inform("Быки: {}, Коровы: {}", b, c)
 
@@ -58,11 +60,16 @@ def _arg_parser() -> argparse.ArgumentParser:
 
 
 def _ref_ask(prompt: str, valid: list[str] = None) -> str:
-    return input(prompt).strip()
+    cow = cowsay.get_random_cow()
+    prompt = cowsay.cowsay(prompt, cow=cow)
+    return input(prompt + "\n: ").strip()
 
 
 def _ref_inform(format_string: str, bulls: int, cows: int) -> None:
-    print(format_string.format(bulls, cows))
+    cow = cowsay.get_random_cow()
+    out = format_string.format(bulls, cows)
+    out = cowsay.cowsay(out, cow=cow)
+    print(out)
 
 
 if __name__ == "__main__":
