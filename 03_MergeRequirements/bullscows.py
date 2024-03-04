@@ -60,8 +60,10 @@ def _arg_parser() -> argparse.ArgumentParser:
 
 
 def _ref_ask(prompt: str, valid: list[str] = None) -> str:
-    cow = cowsay.get_random_cow()
-    prompt = cowsay.cowsay(prompt, cow=cow)
+    cowfile = """        $thoughts
+         (ಠ_ಠ)
+"""
+    prompt = cowsay.cowsay(prompt, cowfile=cowfile)
     return input(prompt + "\n: ").strip()
 
 
@@ -73,6 +75,12 @@ def _ref_inform(format_string: str, bulls: int, cows: int) -> None:
 
 
 if __name__ == "__main__":
+    """
+    If you don't like that program errors every time you type in 
+    a word of wrong length, you can just launch it like this:
+    
+    `python -O ./bullcows.py`
+    """
     parser = _arg_parser()
     args = parser.parse_args()
 
